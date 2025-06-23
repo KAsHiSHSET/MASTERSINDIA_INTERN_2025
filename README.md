@@ -5,7 +5,8 @@
 ![image](https://github.com/user-attachments/assets/826ea04f-ae65-40aa-b2b9-52689b8790bb)
 
 
-### performing crud operation using reddis
+### performing crud operation using reddis (JUST SAMPLE AND LEARNINGS)
+## NOT THE DATA OF COMPANY!!!
 #### 1)POST (Create user)
 Method: POST
 
