@@ -5,7 +5,7 @@
 ![image](https://github.com/user-attachments/assets/826ea04f-ae65-40aa-b2b9-52689b8790bb)
 
 
-### performning crud operation using reddis
+### performing crud operation using reddis
 #### 1)POST (Create user)
 Method: POST
 
@@ -31,7 +31,7 @@ URL: http://localhost:3000/user/1
 ![image](https://github.com/user-attachments/assets/da76e13c-e32d-42b6-8a4d-2d2638cef1d8)
 
 
-Now, user deleted
+-Now, user deleted<br>
 ![image](https://github.com/user-attachments/assets/0629be5c-dcdd-4c75-9df2-60fe9314974e)
 
 
