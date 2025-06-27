@@ -1,44 +1,112 @@
-// app.js
 const express = require('express');
-const { createClient } = require('redis');
+const asyncRedis = require('async-redis');
 
 const app = express();
 const port = 3000;
 
-// Redis client
-const redisClient = createClient();
+app.use(express.json());
 
-redisClient.on('error', (err) => {
-  console.error('Redis error:', err);
+const redisClient = asyncRedis.createClient();
+const REDIS_KEY = 'ids';
+
+async function getIds() {
+  const raw = await redisClient.get(REDIS_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+
+async function saveIds(ids) {
+  await redisClient.set(REDIS_KEY, JSON.stringify(ids));
+}
+
+//  POST 
+app.post('/ids', async (req, res) => {
+  const input = req.body;
+
+  let itemsToAdd = [];
+
+  if (Array.isArray(input)) {
+    itemsToAdd = input.map(obj => obj.id).filter(Boolean);
+  } else if (input && input.id) {
+    itemsToAdd = [input.id];
+  } else if (input && Array.isArray(input.ids)) {
+    itemsToAdd = input.ids;
+  } else {
+    return res.status(400).json({ error: 'Invalid input. Provide { id }, { ids: [] }, or [{ id }] format.' });
+  }
+
+  const existing = await getIds();
+  const newIds = [];
+
+  for (const id of itemsToAdd) {
+    if (!existing.includes(id)) {
+      existing.push(id);
+      newIds.push(id);
+    }
+  }
+
+  await saveIds(existing);
+
+  res.status(201).json({
+    message: `${newIds.length} ID(s) added`,
+    added: newIds,
+    allIds: existing
+  });
 });
 
-// Connect to Redis
-(async () => {
-  await redisClient.connect();
+//  GET 
+app.get('/ids', async (req, res) => {
+  const ids = await getIds();
+  res.json({ ids });
+});
 
-  // Route with Redis caching
-  app.get('/user/:id', async (req, res) => {
-    const userId = req.params.id;
+// DELETE 
+app.delete('/ids', async (req, res) => {
+  const { id, ids } = req.body;
+  const toRemove = id ? [id] : ids;
 
-    // Try getting from Redis first
-    const cachedUser = await redisClient.get(userId);
+  if (!toRemove || !Array.isArray(toRemove)) {
+    return res.status(400).json({ error: 'Provide "id" or "ids" array' });
+  }
 
-    if (cachedUser) {
-      console.log('Cache hit');
-      return res.json({ source: 'cache', data: JSON.parse(cachedUser) });
-    }
+  const current = await getIds();
+  const remaining = current.filter(val => !toRemove.includes(val));
+  const removed = current.filter(val => toRemove.includes(val));
+  const notFound = toRemove.filter(val => !current.includes(val));
 
-    // Simulate DB/API fetch
-    console.log('Cache miss');
-    const user = { id: userId, name: 'Kashish', role: 'developer' };
+  await saveIds(remaining);
 
-    // Store in Redis for 60 seconds
-    await redisClient.setEx(userId, 60, JSON.stringify(user));
+  res.json({ removed, notFound, allIds: remaining });
+});
 
-    res.json({ source: 'API', data: user });
+// PUT
+app.put('/ids', async (req, res) => {
+  const { oldId, newId } = req.body;
+
+  if (!oldId || !newId) {
+    return res.status(400).json({ error: 'Both oldId and newId are required' });
+  }
+
+  let ids = await getIds();
+
+  if (!ids.includes(oldId)) {
+    return res.status(404).json({ message: `ID "${oldId}" not found` });
+  }
+
+  if (ids.includes(newId)) {
+    return res.status(400).json({ message: `ID "${newId}" already exists` });
+  }
+
+  ids = ids.map(id => (id === oldId ? newId : id));
+  await saveIds(ids);
+
+  res.json({
+    message: `ID "${oldId}" updated to "${newId}"`,
+    allIds: ids
   });
+});
 
-  app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-  });
-})();
+// Start server
+app.listen(port, () => {
+  console.log(`✅ Server running at http://localhost:${port}`);
+});
