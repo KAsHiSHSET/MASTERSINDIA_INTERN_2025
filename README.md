@@ -3,6 +3,9 @@
 ## servers active on the local host(contributions)
 
 ![image](https://github.com/user-attachments/assets/a42e9900-344b-49c4-a850-c7fe9348d700)
+![image](https://github.com/user-attachments/assets/b23a51b4-030b-460a-88bc-3ea63f47bd13)
+![image](https://github.com/user-attachments/assets/fdbb5faf-c27b-4c93-a110-19bbb7f07284)
+![image](https://github.com/user-attachments/assets/90fa2472-9e3c-481d-bfe4-1bb6d94ab2c9)
 
 ![image](https://github.com/user-attachments/assets/994ae52d-7256-4369-a8d0-98842009ebf8)
 
