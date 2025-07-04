@@ -1,0 +1,73 @@
+# version: '3.8'
+ 
+# services:
+#   vanilla:
+#     build: .
+#     container_name: vanilla
+#     restart: always
+# #   network_mode: "host"
+#     ports:
+#       - "7000:80"   # Expose Nginx on port 7000
+#       # - "80:80"
+# version: '3.8'
+
+# services:
+#   vanilla:
+#     build: .
+#     container_name: vanilla
+#     restart: always
+#     ports:
+#       - "3000:3000"   
+# version: '3.8'
+# version: '3.8'
+# services:
+#   app:
+#     build: .
+#     container_name: my-node-app
+#     restart: always
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - redis
+#     environment:
+#       - REDIS_HOST=redis
+#     networks:
+#       - app-network
+
+#     redis:
+#     image: redis:latest
+#     container_name: my-redis
+#     # ports:
+#     #   - "6379:6379"  
+#     networks:
+#       - app-network
+
+
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: my-node-app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: my-redis
+    # ports:
+    #   - "6379:6379"  
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
