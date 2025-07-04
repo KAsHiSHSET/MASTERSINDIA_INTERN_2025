@@ -1,4 +1,11 @@
 # MASTERSINDIA_INTERN_2025
+
+## servers active on the local host(contributions)
+
+![image](https://github.com/user-attachments/assets/a42e9900-344b-49c4-a850-c7fe9348d700)
+
+![image](https://github.com/user-attachments/assets/994ae52d-7256-4369-a8d0-98842009ebf8)
+
 ### Working with REDDIS 
 ![image](https://github.com/user-attachments/assets/ed7386cf-7eba-4445-b016-7df5a5dd6cc0)
 ![image](https://github.com/user-attachments/assets/34ee0242-7057-4f38-99c0-9fbf83b199ca)
