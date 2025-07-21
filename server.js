@@ -1,40 +1,26 @@
-const express = require('express');
-const fs = require('fs');
+// server.js
 const crypto = require('crypto');
+const fs = require('fs');
 
-const app = express();
-const PORT = 3000;
-
-// Middleware to parse JSON bodies
-app.use(express.json());
-
-// Load the private key
-const privateKey = fs.readFileSync('private.pem', 'utf8');
-
-// Add your POST route for /decrypt
-app.post('/decrypt', (req, res) => {
-  console.log('Received encrypted payload');
-
-  try {
-    const encryptedBase64 = req.body.encrypted;
-    const encryptedBuffer = Buffer.from(encryptedBase64, 'base64');
-
-    const decrypted = crypto.privateDecrypt(
-      {
-        key: privateKey,
-        padding: crypto.constants.RSA_PKCS1_PADDING
-      },
-      encryptedBuffer
-    );
-
-    res.json({ decrypted: decrypted.toString('utf8') });
-  } catch (err) {
-    console.error('Decryption error:', err.message);
-    res.status(500).json({ error: 'Decryption failed' });
-  }
+// Generate RSA key pair
+const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+  modulusLength: 2048,
 });
 
-// Start the API server
-app.listen(PORT, () => {
-  console.log(`Decryption API running on http://localhost:${PORT}`);
-});
+// Save public and private keys
+fs.writeFileSync('public.pem', publicKey.export({ type: 'pkcs1', format: 'pem' }));
+fs.writeFileSync('private.pem', privateKey.export({ type: 'pkcs1', format: 'pem' }));
+
+// Simulate client message encryption
+const message = "Top Secret: Node.js RSA Encryption!";
+const encrypted = crypto.publicEncrypt(
+  {
+    key: publicKey,
+    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+  },
+  Buffer.from(message)
+);
+
+fs.writeFileSync('intercepted.bin', encrypted); // Intercepted by attacker
+
+console.log('✅ Message encrypted and "sent" (written to intercepted.bin)');

@@ -1,15 +1,16 @@
+const { publicEncrypt, constants } = require('crypto');
 const fs = require('fs');
-const crypto = require('crypto');
 
-const publicKey = fs.readFileSync('./public.pem', 'utf8');
+const publicKey = fs.readFileSync('public.pem', 'utf8');
+const message = 'Secret123!';
 
-const data = 'DONE BY KASHISH SETH';
-const encrypted = crypto.publicEncrypt(
+const encrypted = publicEncrypt(
   {
     key: publicKey,
-    padding: crypto.constants.RSA_PKCS1_PADDING
+    padding: constants.RSA_PKCS1_PADDING,
   },
-  Buffer.from(data)
-);
+  Buffer.from(message)
+).toString('base64');
 
-console.log('Encrypted (base64):', encrypted.toString('base64'));
+fs.writeFileSync('encrypted.txt', encrypted);
+console.log('🔐 Encrypted string saved to encrypted.txt');
