@@ -1,4 +1,5 @@
 # MASTERSINDIA_INTERN_2025
+<img width="1342" height="631" alt="image" src="https://github.com/user-attachments/assets/8685f2bc-9308-4f9e-9b7b-85663906984c" />
 
 ## servers active on the local host(contributions)
 
